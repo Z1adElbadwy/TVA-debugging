@@ -130,8 +130,8 @@ private fun Root() {
                 if (srchT > 0.001f) SearchSheet(s, srchT)
                 if (setT > 0.001f) SettingsScreen(s, setT)
                 AiSheet(s)
-                TextSheet(s, Ov.Instr, "Instructions", s.aiInstr, "How should Miss Minutes behave? e.g. Always answer in Arabic. Keep replies to one sentence.") { s.setAiInstr(it) }
-                TextSheet(s, Ov.Ctx, "Context", s.aiCtx, "What should Miss Minutes know about you? e.g. I'm a student, my lectures are on Sundays and Tuesdays.") { s.setAiCtx(it) }
+                TextSheet(s, Ov.Instr, "Instructions", s.aiInstr, "How should Miss Minutes behave? e.g. Always answer in Arabic. Keep replies to one sentence.") { s.updateAiInstr(it) }
+                TextSheet(s, Ov.Ctx, "Context", s.aiCtx, "What should Miss Minutes know about you? e.g. I'm a student, my lectures are on Sundays and Tuesdays.") { s.updateAiCtx(it) }
                 if (!sheetOn && !on.contains(Ov.List)) MascotLayer(ctl)
             }
         }

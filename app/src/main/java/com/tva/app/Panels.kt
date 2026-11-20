@@ -127,10 +127,10 @@ fun AiSheet(s: AppState) {
     BottomPanel(s.stack.contains(Ov.Ai)) {
         SheetHeadX("Miss Minutes AI") { s.closeTop() }
         Row(Modifier.padding(top = 30.u, start = 30.u, end = 30.u).fillMaxWidth().height(140.u).clip(RoundedCornerShape(48.u, 48.u, 8.u, 8.u)).background(Surface), verticalAlignment = Alignment.CenterVertically) {
-            StyledField(s.aiKey, { s.setAiKey(it) }, "API key", Modifier.padding(horizontal = 50.u).fillMaxWidth(), password = true)
+            StyledField(s.aiKey, { s.updateAiKey(it) }, "API key", Modifier.padding(horizontal = 50.u).fillMaxWidth(), password = true)
         }
         Row(Modifier.padding(top = 4.u, start = 30.u, end = 30.u).fillMaxWidth().height(140.u).clip(RoundedCornerShape(8.u)).background(Surface), verticalAlignment = Alignment.CenterVertically) {
-            StyledField(s.aiModel, { s.setAiModel(it) }, "Model (optional)", Modifier.padding(horizontal = 50.u).fillMaxWidth())
+            StyledField(s.aiModel, { s.updateAiModel(it) }, "Model (optional)", Modifier.padding(horizontal = 50.u).fillMaxWidth())
         }
         ChevRow("Instructions", RoundedCornerShape(8.u), 4) { s.openO(Ov.Instr) }
         ChevRow("Context", RoundedCornerShape(8.u, 8.u, 48.u, 48.u), 4) { s.openO(Ov.Ctx) }

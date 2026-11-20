@@ -315,7 +315,7 @@ class ChessGame(val s: AppState, private val scope: CoroutineScope) {
         speak("Take it back, darlin. Take your time.", "wave")
     }
 
-    fun setMode(m: String) {
+    fun switchMode(m: String) {
         if (!started || mode == m) return
         if (ply > 0 && !over && armMode != m) {
             armMode = m; val g = gid

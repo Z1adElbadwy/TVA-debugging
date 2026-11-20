@@ -176,8 +176,8 @@ fun ChessScreen(s: AppState, g: ChessGame, t: Float) {
         }
         Row(st(6).fillMaxWidth().padding(start = 30.u, end = 30.u, top = 16.u, bottom = 30.u), horizontalArrangement = Arrangement.spacedBy(10.u)) {
             val pv = g.mode == "pvp"
-            PillBtn(if (g.armMode == "ai") "Tap to confirm" else "Miss Minutes", Modifier.weight(1f), if (!pv) Txt else Surface, if (!pv) Color(0xFF1A1A19) else Muted, 84, 34.72) { g.setMode("ai") }
-            PillBtn(if (g.armMode == "pvp") "Tap to confirm" else "In person", Modifier.weight(1f), if (pv) Txt else Surface, if (pv) Color(0xFF1A1A19) else Muted, 84, 34.72) { g.setMode("pvp") }
+            PillBtn(if (g.armMode == "ai") "Tap to confirm" else "Miss Minutes", Modifier.weight(1f), if (!pv) Txt else Surface, if (!pv) Color(0xFF1A1A19) else Muted, 84, 34.72) { g.switchMode("ai") }
+            PillBtn(if (g.armMode == "pvp") "Tap to confirm" else "In person", Modifier.weight(1f), if (pv) Txt else Surface, if (pv) Color(0xFF1A1A19) else Muted, 84, 34.72) { g.switchMode("pvp") }
         }
     }
 }

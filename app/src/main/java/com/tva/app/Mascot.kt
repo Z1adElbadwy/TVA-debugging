@@ -124,7 +124,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
     private fun randomPos() = Offset(Random.nextFloat() * (W - nl), vis * .15f + Random.nextFloat() * (vis - mc - vis * .15f))
 
     // ---- sprite loop ----------------------------------------------------------------
-    fun setMood(m: String) {
+    fun applyMood(m: String) {
         mood = m; frame = 0
         moodJob?.cancel()
         val (_, n, ms) = sp[m] ?: return
@@ -132,7 +132,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
             var b = 0
             while (true) {
                 delay(ms); b++
-                if (m in oneShot && b >= n) { mood = "idle"; frame = 0; moodJob = null; setMood("idle"); return@launch }
+                if (m in oneShot && b >= n) { mood = "idle"; frame = 0; moodJob = null; applyMood("idle"); return@launch }
                 frame = b % n
             }
         }
@@ -154,12 +154,12 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
         val p = ch.position
         val r = spriteRect
         if (r != Rect.Zero && r.contains(p)) return
-        if (mood != "idle") setMood("idle")
+        if (mood != "idle") applyMood("idle")
         val cx = r.left + r.width / 2f; val cy = r.top + r.height / 2f
         val deg = atan2((p.x - cx).toDouble(), (-(p.y - cy)).toDouble()) * 180.0 / PI
         look = (((deg % 360 + 360) % 360) / 22.5).roundToInt() % 16
         lookJob?.cancel()
-        lookJob = scope.launch { delay(1600); look = null; if (s.focusedInput) setMood("wait") }
+        lookJob = scope.launch { delay(1600); look = null; if (s.focusedInput) applyMood("wait") }
     }
 
     // ---- movement ---------------------------------------------------------------------
@@ -168,9 +168,9 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
         val c = pos.value; val d = hypot(t.x - c.x, t.y - c.y)
         val ms = min(7000f, max(1500f, d / (W * .15f) * 1000f)).toInt()
         look = null
-        setMood(if (t.x >= c.x) "runR" else "runL")
+        applyMood(if (t.x >= c.x) "runR" else "runL")
         moveJob?.cancel(); moveJob = scope.launch { pos.animateTo(t, tween(ms, easing = LinearEasing)) }
-        later(ms.toLong()) { if (mood == "runR" || mood == "runL") setMood("idle") }
+        later(ms.toLong()) { if (mood == "runR" || mood == "runL") applyMood("idle") }
     }
 
     /** glitch-out, jump to a position, glitch-in */
@@ -183,7 +183,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
             scope.launch {
                 val a = Animatable(0f); a.animateTo(1f, tween(300, easing = LinearEasing)) { glitchP = value }
                 glitchIn = false
-                if (wave && !hold && mood == "idle") setMood("wave")
+                if (wave && !hold && mood == "idle") applyMood("wave")
             }
         }
     }
@@ -219,7 +219,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
     // ---- speech bubble ------------------------------------------------------------------
     fun say(text: String, act: String, quiet: Boolean) {
         bubble = if (quiet) "" else text
-        look = null; setMood(act)
+        look = null; applyMood(act)
         bubbleJob?.cancel()
         val a = max(6000, text.length * 110).toLong()
         bubbleJob = scope.launch { delay(a); bubble = "" }
@@ -231,9 +231,9 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
 
     fun onMood(m: String) {
         when (m) {
-            "wait" -> { if (!busy) { hold = true; look = null; setMood("wait") } }
-            "idle" -> { if (!busy) { hold = false; if (mood == "wait") setMood("idle") } }
-            else -> { if (!busy) { look = null; setMood(m) } }
+            "wait" -> { if (!busy) { hold = true; look = null; applyMood("wait") } }
+            "idle" -> { if (!busy) { hold = false; if (mood == "wait") applyMood("idle") } }
+            else -> { if (!busy) { look = null; applyMood(m) } }
         }
     }
 
@@ -245,7 +245,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
             say(if (ar) "أحتاج مفتاح الـ API أولًا يا عزيزي. ضعه في الإعدادات ثم Miss Minutes AI." else "I need my API key first, sugar. Pop it into Settings, then Miss Minutes AI.", "fail", false)
             return
         }
-        busy = true; bubbleJob?.cancel(); hold = true; look = null; setMood("work"); bubble = "…"
+        busy = true; bubbleJob?.cancel(); hold = true; look = null; applyMood("work"); bubble = "…"
         scope.launch {
             try {
                 val r = Ai.chat(s, msg)
@@ -267,9 +267,9 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
     fun start() {
         s.say = { t, a, q -> say(t, a, q) }
         s.onSend = { m -> send(m) }
-        setMood("idle")
+        applyMood("idle")
         scope.launch { pos.snapTo(homePos()) }
-        later(1400) { if (!hold) setMood("wave") }
+        later(1400) { if (!hold) applyMood("wave") }
         // random idle behaviour every 6–13 s
         scope.launch {
             delay(5000)
@@ -278,8 +278,8 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
                     val b = Random.nextFloat(); val a = isAnchored()
                     if (!a && b < .3f) run(randomPos())
                     else if (!a && b < .5f) teleport(randomPos(), false, true)
-                    else if (b < .62f) setMood("jump")
-                    else if (b < .74f) setMood("wave")
+                    else if (b < .62f) applyMood("jump")
+                    else if (b < .74f) applyMood("wave")
                     else lookAt(Random.nextDouble(0.0, 360.0), 2400)
                 }
                 delay(6000 + (Random.nextFloat() * 7000).toLong())
@@ -294,7 +294,7 @@ class MascotCtl(val s: AppState, val scope: CoroutineScope, val sheet: ImageBitm
 
     fun pressSprite() {
         if (glitchIn || glitchOut) return
-        if (isAnchored()) { if (!hold && mood == "idle") setMood("jump") }
+        if (isAnchored()) { if (!hold && mood == "idle") applyMood("jump") }
         else teleport(randomPos(), false, true)
     }
 }

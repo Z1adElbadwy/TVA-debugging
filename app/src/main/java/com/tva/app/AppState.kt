@@ -116,10 +116,10 @@ class AppState(val ctx: Context) {
     var aiInstr by mutableStateOf(sp.getString("aiInstr", "") ?: "")
     var aiCtx by mutableStateOf(sp.getString("aiCtx", "") ?: "")
     var chMode by mutableStateOf(sp.getString("chMode", "ai") ?: "ai")
-    fun setAiKey(v: String) { aiKey = v.trim(); sp.edit().putString("aiKey", aiKey).apply() }
-    fun setAiModel(v: String) { aiModel = v.trim(); sp.edit().putString("aiModel", aiModel).apply() }
-    fun setAiInstr(v: String) { aiInstr = v; sp.edit().putString("aiInstr", v).apply() }
-    fun setAiCtx(v: String) { aiCtx = v; sp.edit().putString("aiCtx", v).apply() }
+    fun updateAiKey(v: String) { aiKey = v.trim(); sp.edit().putString("aiKey", aiKey).apply() }
+    fun updateAiModel(v: String) { aiModel = v.trim(); sp.edit().putString("aiModel", aiModel).apply() }
+    fun updateAiInstr(v: String) { aiInstr = v; sp.edit().putString("aiInstr", v).apply() }
+    fun updateAiCtx(v: String) { aiCtx = v; sp.edit().putString("aiCtx", v).apply() }
     fun setChModePref(v: String) { chMode = v; sp.edit().putString("chMode", v).apply() }
 
     // ---- navigation (overlay stack) ---------------------------------------------
